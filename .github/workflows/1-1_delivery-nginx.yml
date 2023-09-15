@@ -1,0 +1,26 @@
+name: "[Deploy] Docker Image"
+
+on:
+  workflow_dispatch:
+  push: 
+    branches: [ main ]
+    paths:
+      - nginx/**
+      - .github/workflows/1*
+
+jobs:
+  deploy-image:
+    permissions:
+      id-token: write
+      contents: read
+      
+    uses: ./.github/workflows/1-2_delivery.yml
+    with:
+      profile: "nginx"
+      image_tag: test
+    secrets:
+      LOCATION: ${{ secrets.LOCATION }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      PROVIDER_ID: ${{ secrets.PROVIDER_ID }}
+      REPOSITORY: ${{ secrets.REPOSITORY }}
+      SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}

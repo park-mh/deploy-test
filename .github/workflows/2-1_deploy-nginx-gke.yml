@@ -1,0 +1,31 @@
+name: "[Deploy] Nginx Upgrade the release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Image Tag
+        required: true
+        type: string
+
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+
+    uses: ./.github/workflows/2-2_deploy-helm-gke.yml
+    with:
+      chart_path: helm-nginx/
+      namespace: nginx
+      zone: asia-northeast3-a
+      release_name: nginx
+      image_tag: ${{ inputs.image_tag }}
+    secrets:
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      GKE_PROVIDER_ID: ${{ secrets.GKE_PROVIDER_ID }}
+      GKE_SERVICE_ACCOUNT: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+      CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}

@@ -1,0 +1,136 @@
+name: release into the target GKE cluster
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      chart_path:
+        required: true
+        type: string
+      namespace:
+        required: true
+        type: string
+      zone:
+        required: true
+        type: string
+      release_name:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string       
+    secrets:
+      PROJECT_ID: 
+        required: true
+      GKE_PROVIDER_ID: 
+        required: true
+      CLUSTER_NAME: 
+        required: true
+      GKE_SERVICE_ACCOUNT:
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  prepare:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Image tag is override - ${{ inputs.image_tag }}
+        if: ${{ inputs.image_tag != null && inputs.image_tag != ''}}
+        run: echo "OPT_IMAGE_TAG=--set-string image.tag=${{ inputs.image_tag }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+                    
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v3 
+
+      - name: Print the Helm client version information
+        run: helm version
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/bespin-gcp-ps/dqa-test-k8s-deploy'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: Examine the chart for possible issues
+        run: helm lint ${{ inputs.chart_path }}
+
+      - name: "[MANIFESTS] Dry-run the release"
+        run: |
+            helm upgrade ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            --namespace ${{ inputs.namespace }} \
+            ${{ env.OPT_IMAGE_TAG }} \
+            --install \
+            --dry-run
+
+  deploy:
+    needs: prepare
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Image tag is override - ${{ inputs.image_tag }}
+        if: ${{ inputs.image_tag != null && inputs.image_tag != ''}}
+        run: echo "OPT_IMAGE_TAG=--set-string image.tag=${{ inputs.image_tag }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+                    
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v3 
+
+      - name: Print the Helm client version information
+        run: helm version
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/bespin-gcp-ps/dqa-test-k8s-deploy'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: Examine the chart for possible issues
+        run: helm lint ${{ inputs.chart_path }}
+
+      - name: Upgrade the release
+        run: |
+          helm upgrade ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            --namespace ${{ inputs.namespace }} \
+            ${{ env.OPT_IMAGE_TAG }} \
+            --install 
+
+      - name: List the upgrade result
+        run: helm list --filter ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}

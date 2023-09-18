@@ -134,3 +134,18 @@ jobs:
 
       - name: List the upgrade result
         run: helm list --filter ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}
+
+      - name: Monitor rolling update
+        run: |
+          while kubectl rollout status deployment/${{ inputs.release_name }} --namespace ${{ inputs.namespace }} --watch=false | grep -q "waiting"; do
+            echo "Rolling update is still in progress..."
+            sleep 10
+          done
+
+      - name: "Check Rollout status"
+        run: |
+          kubectl rollout status deployment ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}
+  
+      - name: "Check Rollout history"
+        run: |
+          kubectl rollout history deployment ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}

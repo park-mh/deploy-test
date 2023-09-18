@@ -37,6 +37,10 @@ service:
   type: ClusterIP
   port: 80
 
+certificate:
+  name: dqa-nginx-cert
+  domain: www.cheeze.store
+
 ingress:
   enabled: true
   className: ""
@@ -44,6 +48,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
+    networking.gke.io/managed-certificates: dqa-nginx-cert
   path: /
 
 resources:

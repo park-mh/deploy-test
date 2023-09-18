@@ -1,0 +1,29 @@
+name: "[Check] release update check"
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: Release Name
+        required: true
+        type: string
+
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+
+    uses: ./.github/workflows/3-2_check.yml
+    with:
+      namespace: nginx
+      zone: asia-northeast3-a
+      release_name: ${{ inputs.release_name }}
+    secrets:
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      GKE_PROVIDER_ID: ${{ secrets.GKE_PROVIDER_ID }}
+      GKE_SERVICE_ACCOUNT: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+      CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}

@@ -1,0 +1,75 @@
+name: release into the target GKE cluster
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      namespace:
+        required: true
+        type: string
+      zone:
+        required: true
+        type: string
+      release_name:
+        required: true
+        type: string
+    
+    secrets:
+      PROJECT_ID: 
+        required: true
+      GKE_PROVIDER_ID: 
+        required: true
+      CLUSTER_NAME: 
+        required: true
+      GKE_SERVICE_ACCOUNT:
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  prepare:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+                    
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v3 
+
+      - name: Print the Helm client version information
+        run: helm version
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/park-mh/deploy-test'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: "Check Rollout status"
+        run: |
+            kubectl rollout status deployment ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}
+
+      - name: "Check Rollout history"
+        run: |
+            kubectl rollout history deployment ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}
+
+      - name: "Watch Rolling Update"
+        run: |
+            kubectl get pod --namespace ${{ inputs.namespace }} -o wide -w

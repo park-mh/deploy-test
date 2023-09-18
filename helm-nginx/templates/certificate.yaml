@@ -3,4 +3,5 @@ kind: ManagedCertificate
 metadata:
   name: {{ .Values.certificate.name }}
 spec:
-  domains: {{ .Values.certificate.domain }}
+  domains: 
+    - {{ .Values.certificate.domain }}

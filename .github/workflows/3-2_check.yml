@@ -70,6 +70,16 @@ jobs:
         run: |
             kubectl rollout history deployment ${{ inputs.release_name }} --namespace ${{ inputs.namespace }}
 
-      - name: "Watch Rolling Update"
+      # - name: "Watch Rolling Update"
+      #   run: |
+      #       kubectl get pod --namespace ${{ inputs.namespace }} -o wide -w
+
+      - name: Port forward to dashboard
         run: |
-            kubectl get pod --namespace ${{ inputs.namespace }} -o wide -w
+          kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8001:443 &
+          sleep 5
+
+      - name: Open dashboard
+        run: |
+          echo "http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/"
+          curl -L http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/

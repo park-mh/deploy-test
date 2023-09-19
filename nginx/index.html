@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Pod Information</title>
   </head>
-  <meta charset="UTF-8">
-  <title>테스트</title>
   <body>
-    <center>
-    <h1>DQA 내부과제 용 테스트 화면입니다.</h1>
-    <h3>Image Tag : v1</h3>
-    </center>
+    <h1>Pod Information</h1>
+    <p>Hostname: {{.Hostname}}</p>
+    <p>IP Address: {{.IP}}</p>
+    <p>Node Name: {{.NodeName}}</p>
+    <p>Image Name: {{.ImageName}}</p>
+    <p>Image Tag: {{.ImageTag}}</p>
+    <img src="{{.ImageURL}}" alt="Pod Image">
   </body>
 </html>

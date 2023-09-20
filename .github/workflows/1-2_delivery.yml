@@ -32,6 +32,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Add Image info to HTML
+        run: |
+          sed -i 's|{{ imageName }}|${{ env.IMAGE_NAME }}|' nginx/index.html
+          sed -i 's|{{ imageTag }}|${{ inputs.image_tag }}|' nginx/index.html
+
+      - name: cat index.html
+        run: |
+          cat nginx/index.html
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2

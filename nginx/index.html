@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Pod Information</title>
-</head>
-<body>
-    <h1>Pod Information</h1>
-    <table>
-        <tr>
-            <th>Pod Name</th>
-            <th>Pod IP</th>
-            <th>Node Name</th>
-        </tr>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $.getJSON("/api/v1/namespaces/default/pods", function(data) {
-                    $.each(data.items, function(key, val) {
-                        var podName = val.metadata.name;
-                        var podIP = val.status.podIP;
-                        var nodeName = val.spec.nodeName;
-                        $('table').append('<tr><td>' + podName + '</td><td>' + podIP + '</td><td>' + nodeName + '</td></tr>');
-                    });
-                });
-            });
-        </script>
-    </table>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>테스트</title>
+  </head>
+  <body>
+    <center>
+      <h1>DQA 내부과제 용 테스트 화면입니다.</h1>
+      <p id="hostname"></p>
+      <p id="ipAddress"></p>
+      <p id="imageName"></p>
+      <p id="imageTag"></p>
+    </center>
+    <script>
+      // 호스트 이름 가져오기
+      const hostname = window.location.hostname;
+      document.getElementById("hostname").textContent = "호스트 이름: " + hostname;
+
+      // IP 주소 가져오기
+      const ipAddress = window.location.host;
+      document.getElementById("ipAddress").textContent = "IP 주소: " + ipAddress;
+
+      // 이미지 태그 가져오기
+      const imageName = "이미지 태그: " + "{{ imageName }}";
+      document.getElementById("imageName").textContent = imageName;
+
+      // 이미지 태그 가져오기
+      const imageTag = "이미지 태그: " + "{{ imageTag }}";
+      document.getElementById("imageTag").textContent = imageTag;
+    </script>
+  </body>
 </html>

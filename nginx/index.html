@@ -15,18 +15,18 @@
     <script>
       // 호스트 이름 가져오기
       const hostname = "{{ env.HOSTNAME }}";
-      document.getElementById("hostname").textContent = "호스트 이름: " + hostname;
+      document.getElementById("hostname").textContent = "Hostname: " + hostname;
 
       // IP 주소 가져오기
       const ipAddress = "{{ env.POD_IP }}";
-      document.getElementById("ipAddress").textContent = "IP 주소: " + ipAddress;
+      document.getElementById("ipAddress").textContent = "IP: " + ipAddress;
 
-      // 이미지 태그 가져오기
-      const imageName = "이미지 태그: " + "{{ imageName }}";
+      // 이미지 이름 가져오기
+      const imageName = "Image Name " + "{{ imageName }}";
       document.getElementById("imageName").textContent = imageName;
 
       // 이미지 태그 가져오기
-      const imageTag = "이미지 태그: " + "{{ imageTag }}";
+      const imageTag = "Image Tag: " + "{{ imageTag }}";
       document.getElementById("imageTag").textContent = imageTag;
     </script>
   </body>

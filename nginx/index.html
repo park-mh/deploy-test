@@ -14,11 +14,11 @@
     </center>
     <script>
       // 호스트 이름 가져오기
-      const hostname = window.location.hostname;
+      const hostname = "{{ env.HOSTNAME }}";
       document.getElementById("hostname").textContent = "호스트 이름: " + hostname;
 
       // IP 주소 가져오기
-      const ipAddress = window.location.host;
+      const ipAddress = "{{ env.POD_IP }}";
       document.getElementById("ipAddress").textContent = "IP 주소: " + ipAddress;
 
       // 이미지 태그 가져오기

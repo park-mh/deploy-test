@@ -5,7 +5,7 @@
 replicaCount: 5
 
 image:
-  repository: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/test-nginx
+  repository: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/dqa-test-nginx
   # Overrides the image tag whose default is the chart appVersion.
   tag: #Override
 

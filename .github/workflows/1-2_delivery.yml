@@ -22,7 +22,7 @@ on:
         required: true
 
 env:
-  IMAGE_NAME: test-nginx
+  IMAGE_NAME: dqa-test-nginx
   HOSTNAME: ${{ secrets.LOCATION }}-docker.pkg.dev
 
 jobs:

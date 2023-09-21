@@ -39,7 +39,7 @@ service:
 
 certificate:
   name: dqa-nginx-cert
-  domain: www.cheeze.store
+  domain: test.cheeze.store
 
 ingress:
   enabled: true

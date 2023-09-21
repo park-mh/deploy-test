@@ -7,36 +7,10 @@
   <body>
     <center>
       <h1>DQA 내부과제 용 테스트 화면입니다.</h1>
-      <p id="nodeName"></p>
-      <p id="hostname"></p>
-      <p id="ipAddress"></p>
       <p id="imageName"></p>
       <p id="imageTag"></p>
     </center>
     <script>
-      async function getPodMetadata(podName) {
-        const Client = require('kubernetes-client').Client
-        const config = require('kubernetes-client').config
-
-        const client = new Client({ config: config.fromKubeconfig(), version: '1.13' })
-        await client.loadSpec()
-        const pod = await client.api.v1.namespaces('default').pods(podName).get()
-        return {
-          nodeName: pod.spec.nodeName,
-          podIP: pod.status.podIP,
-          hostname: window.location.hostname
-        }
-      }
-
-      async function displayPodMetadata(podName) {
-        const podMetadata = await getPodMetadata(podName)
-        document.getElementById("nodeName").textContent = "NodeName: " + podMetadata.nodeName
-        document.getElementById("hostname").textContent = "Hostname: " + podMetadata.hostname
-        document.getElementById("ipAddress").textContent = "IP: " + podMetadata.podIP
-      }
-
-      displayPodMetadata("my-pod")
-
       // 이미지 이름 가져오기
       const imageName = "Image Name: " + "{{ imageName }}";
       document.getElementById("imageName").textContent = imageName;

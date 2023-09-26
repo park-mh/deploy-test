@@ -39,10 +39,8 @@ service:
 
 virtualservice:
   enabled: false
-  # primary:
-  #   weight: 100
-  # canary:
-  #   weight: 0
+  # primaryweight: 100
+  # canaryweight: 0
 
 certificate:
   name: dqa-nginx-cert

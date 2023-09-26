@@ -13,8 +13,8 @@ spec:
       route:
         - destination:
             host: nginx
-          weight: {{ .Values.virtualservice.primary.weight }}
+          weight: {{ .Values.virtualservice.primaryweight }}
         - destination:
             host: {{ include "helm-nginx.fullname" . }}
-          weight: {{ .Values.virtualservice.canary.weight }}
+          weight: {{ .Values.virtualservice.canaryweight }}
 {{- end }}

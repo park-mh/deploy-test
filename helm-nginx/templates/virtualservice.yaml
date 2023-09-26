@@ -1,0 +1,20 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "helm-nginx.fullname" . }}
+  labels:
+    {{- include "helm-nginx.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "helm-nginx.fullname" . }}
+  http:
+    - name: primary
+      route:
+        - destination:
+            host: nginx
+          weight: {{ .Values.virtualservice.primary.weight }}
+        - destination:
+            host: {{ include "helm-nginx.fullname" . }}
+          weight: {{ .Values.virtualservice.canary.weight }}
+{{- end }}

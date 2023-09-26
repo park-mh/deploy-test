@@ -5,13 +5,13 @@
 replicaCount: 5
 
 image:
-  repository: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/dqa-test-nginx
+  repository: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/dqa-test-nginx-canary
   # Overrides the image tag whose default is the chart appVersion.
   tag: #Override
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: "nginx"
+fullnameOverride: "nginx-canary"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -37,6 +37,13 @@ service:
   type: ClusterIP
   port: 80
 
+virtualservice:
+  enabled: true
+  primary:
+    weight: 100
+  canary:
+    weight: 0
+
 certificate:
   name: dqa-nginx-cert
   domain: test.cheeze.store
@@ -49,6 +56,8 @@ ingress:
     # kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
     networking.gke.io/managed-certificates: dqa-nginx-cert
+    nginx.ingress.kubernetes.io/canary: 'true'
+    nginx.ingress.kubernetes.io/canary-weight: '0'
   path: /
 
 resources:

@@ -7,6 +7,9 @@ on:
       chart_path:
         required: true
         type: string
+      value_path:
+        required: true
+        type: string
       namespace:
         required: true
         type: string
@@ -77,6 +80,7 @@ jobs:
       - name: "[MANIFESTS] Dry-run the release"
         run: |
             helm upgrade ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            --values ${{ inputs.value_path }} \
             --namespace ${{ inputs.namespace }} \
             ${{ env.OPT_IMAGE_TAG }} \
             --install \
@@ -128,6 +132,7 @@ jobs:
       - name: Upgrade the release
         run: |
           helm upgrade ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            --values ${{ inputs.value_path }} \
             --namespace ${{ inputs.namespace }} \
             ${{ env.OPT_IMAGE_TAG }} \
             --install 

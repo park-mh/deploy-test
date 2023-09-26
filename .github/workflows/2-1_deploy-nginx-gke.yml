@@ -20,6 +20,7 @@ jobs:
     uses: ./.github/workflows/2-2_deploy-helm-gke.yml
     with:
       chart_path: helm-nginx/
+      value_path: env/values-rolling.yaml
       namespace: nginx
       zone: asia-northeast3-a
       release_name: nginx

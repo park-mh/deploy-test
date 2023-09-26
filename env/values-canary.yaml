@@ -1,0 +1,84 @@
+# Default values for helm-nginx.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 5
+
+image:
+  repository: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/dqa-test-nginx
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: #Override
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "nginx"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  gcpServiceAccount: dqa-test-deploy-gke@beha-data.iam.gserviceaccount.com
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+certificate:
+  name: dqa-nginx-cert
+  domain: test.cheeze.store
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
+    networking.gke.io/managed-certificates: dqa-nginx-cert
+  path: /
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

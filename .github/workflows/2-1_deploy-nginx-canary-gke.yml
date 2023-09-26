@@ -1,4 +1,4 @@
-name: "[Deploy] Nginx Upgrade the release"
+name: "[Deploy] Nginx Canary Upgrade the release"
 
 on:
   workflow_dispatch:

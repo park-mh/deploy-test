@@ -50,7 +50,7 @@ ingress:
     kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
     networking.gke.io/managed-certificates: dqa-nginx-cert
     nginx.ingress.kubernetes.io/canary: 'true'
-    nginx.ingress.kubernetes.io/canary-weight: '0'
+    nginx.ingress.kubernetes.io/canary-weight: '30'
   path: /
 
 resources:

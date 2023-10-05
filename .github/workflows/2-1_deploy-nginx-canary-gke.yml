@@ -19,7 +19,7 @@ jobs:
 
     uses: ./.github/workflows/2-2_deploy-helm-gke.yml
     with:
-      chart_path: helm-nginx/
+      chart_path: canary-nginx/
       value_path: env/values-canary.yaml
       namespace: nginx
       zone: asia-northeast3-a

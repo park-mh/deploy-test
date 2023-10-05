@@ -37,11 +37,6 @@ service:
   type: ClusterIP
   port: 80
 
-virtualservice:
-  enabled: false
-  # primaryweight: 100
-  # canaryweight: 0
-
 certificate:
   name: dqa-nginx-cert
   domain: test.cheeze.store

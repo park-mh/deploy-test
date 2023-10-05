@@ -23,7 +23,7 @@ jobs:
       value_path: env/values-canary.yaml
       namespace: nginx
       zone: asia-northeast3-a
-      release_name: nginx
+      release_name: canary-nginx
       image_tag: ${{ inputs.image_tag }}
     secrets:
       PROJECT_ID: ${{ secrets.PROJECT_ID }}

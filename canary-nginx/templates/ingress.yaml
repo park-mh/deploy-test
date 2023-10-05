@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "helm-nginx.fullname" . -}}
+{{- $fullName := include "canary-nginx.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
@@ -12,7 +12,7 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "helm-nginx.labels" . | nindent 4 }}
+    {{- include "canary-nginx.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -26,7 +26,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "helm-nginx.fullname" . }}
+                name: {{ include "canary-nginx.fullname" . }}
                 port:
                   name: http
 {{- end }}

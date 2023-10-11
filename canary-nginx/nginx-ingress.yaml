@@ -4,6 +4,8 @@ metadata:
   name: nginx-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
     kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
 spec:
   rules:
@@ -17,3 +19,12 @@ spec:
                 name: nginx-svc
                 port:
                   name: http
+            weight: 30
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: canary-svc
+                port:
+                  name: http
+            weight: 70

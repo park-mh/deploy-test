@@ -25,7 +25,7 @@ kind: Service
 metadata:
   name: nginx-svc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: nginx
     version: v1

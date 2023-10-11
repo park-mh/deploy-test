@@ -53,7 +53,8 @@ jobs:
 
       - name: "Deploy production"
         run: |
-          kubectl apply -f canary-nginx/production-service.yaml --namespace test
+          cd canary-nginx \
+          kubectl apply -f production-service.yaml --namespace test
     
       - name: "Check production Pod"
         run: |
@@ -65,7 +66,7 @@ jobs:
     
       - name: "Deploy production Ingress"
         run: |
-          kubectl apply -f canary-nginx/production-ingress.yaml --namespace test
+          kubectl apply -f production-ingress.yaml --namespace test
 
       - name: "Check production Ingress"
         run: |

@@ -16,4 +16,4 @@ spec:
               service:
                 name: svc-production
                 port:
-                  name: 80
+                  name: http

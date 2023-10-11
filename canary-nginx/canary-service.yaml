@@ -28,3 +28,4 @@ spec:
     app: svc-canary
   ports:
     - port: 80
+      name: http

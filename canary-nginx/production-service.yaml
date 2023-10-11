@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-name: svc-production
+  name: svc-production
 spec:
   type: NodePort
   selector:

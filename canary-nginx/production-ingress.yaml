@@ -4,7 +4,6 @@ metadata:
   name: production-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
 spec:
   rules:
     - host: test.cheeze.store

@@ -51,9 +51,10 @@ jobs:
       - name: Get Kubernetes config
         run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
 
+      - run: cd canary-nginx
+      
       - name: "Deploy production"
         run: |
-          cd canary-nginx \
           kubectl apply -f production-service.yaml --namespace test
     
       - name: "Check production Pod"

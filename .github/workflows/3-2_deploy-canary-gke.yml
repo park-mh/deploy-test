@@ -53,7 +53,7 @@ jobs:
       
       - name: "Deploy production"
         run: |
-          kubectl apply -f canary-nginx/production-service.yaml --namespace test
+          kubectl apply -f canary-nginx/nginx-app.yaml --namespace test
     
       - name: "Check production Pod"
         run: |
@@ -65,7 +65,7 @@ jobs:
     
       - name: "Deploy production Ingress"
         run: |
-          kubectl apply -f canary-nginx/production-ingress.yaml --namespace test
+          kubectl apply -f canary-nginx/nginx-ingress.yaml --namespace test
 
       - name: "Check production Ingress"
         run: |
@@ -104,20 +104,12 @@ jobs:
 
       - name: "Deploy Canary"
         run: |
-          kubectl apply -f canary-nginx/canary-service.yaml --namespace test
+          kubectl apply -f canary-nginx/nginx-canary.yaml --namespace test
     
       - name: "Check Canary Pod"
         run: |
           kubectl get pod --namespace test
 
-      - name: "Check Canary Service"
+      - name: "Change Backend Service"
         run: |
-          kubectl get svc --namespace test
-
-      - name: "Deploy Canary Ingress"
-        run: |
-          kubectl apply -f canary-nginx/canary-ingress.yaml --namespace test
-
-      - name: "Check Canary Ingress"
-        run: |
-          kubectl get ingress --namespace test
+          kubectl patch service nginx-svc --namespace test --patch '{"spec": {"selector": {"version": null}}}'

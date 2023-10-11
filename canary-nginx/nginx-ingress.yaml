@@ -1,9 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: production-ingress
+  name: nginx-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.global-static-ip-name: dqa-test-k8s-nginx-ip
 spec:
   rules:
     - host: test.cheeze.store
@@ -13,6 +14,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: svc-production
+                name: nginx-svc
                 port:
                   name: http

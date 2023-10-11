@@ -1,19 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: svc-production
+  name: nginx-app
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: svc-production
+      app: nginx
+      version: v1
   template:
     metadata:
       labels:
-        app: svc-production
+        app: nginx
+        version: v1
     spec:
       containers:
-        - name: svc-production
+        - name: nginx-app
           image: asia-northeast3-docker.pkg.dev/mh-bespin-dev/nginx/dqa-test-nginx:v4
           ports:
            - containerPort: 80
@@ -21,11 +23,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: svc-production
+  name: nginx-svc
 spec:
   type: NodePort
   selector:
-    app: svc-production
+    app: nginx
+    version: v1
   ports:
     - port: 80
       name: http

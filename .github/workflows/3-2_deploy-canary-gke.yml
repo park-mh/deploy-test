@@ -1,0 +1,123 @@
+name: Canary release into the target GKE cluster
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      namespace:
+        required: true
+        type: string
+      zone:
+        required: true
+        type: string      
+    secrets:
+      PROJECT_ID: 
+        required: true
+      GKE_PROVIDER_ID: 
+        required: true
+      CLUSTER_NAME: 
+        required: true
+      GKE_SERVICE_ACCOUNT:
+        required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/park-mh/deploy-test'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: "Deploy production"
+        run: |
+          kubectl apply -f canary-nginx/production-service.yaml --namespace test
+    
+      - name: "Check production Pod"
+        run: |
+          kubectl get pod --namespace test
+
+      - name: "Check production Service"
+        run: |
+          kubectl get svc --namespace test
+    
+      - name: "Deploy production Ingress"
+        run: |
+          kubectl apply -f canary-nginx/production-ingress.yaml --namespace test
+
+      - name: "Check production Ingress"
+        run: |
+          kubectl get ingress --namespace test
+
+  canary:
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/park-mh/deploy-test'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: "Deploy Canary"
+        run: |
+          kubectl apply -f canary-nginx/canary-service.yaml --namespace test
+    
+      - name: "Check Canary Pod"
+        run: |
+          kubectl get pod --namespace test
+
+      - name: "Check Canary Service"
+        run: |
+          kubectl get svc --namespace test
+
+      - name: "Deploy Canary Ingress"
+        run: |
+          kubectl apply -f canary-nginx/canary-ingress.yaml --namespace test
+
+      - name: "Check Canary Ingress"
+        run: |
+          kubectl get ingress --namespace test

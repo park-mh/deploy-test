@@ -34,7 +34,7 @@ jobs:
         run: gcloud components install gke-gcloud-auth-plugin
 
       - name: Get Kubernetes config
-        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone asia-northeast3-a --project ${{ secrets.PROJECT_ID }}
 
       - name: Run Skaffold pipeline as action
         uses: hiberbee/github-action-skaffold@latest

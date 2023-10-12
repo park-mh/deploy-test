@@ -38,7 +38,7 @@ jobs:
 
       - name: "Deploy Canary"
         run: |
-          kubectl apply -f canary-nginx/nginx-canary.yaml --namespace test
+          kubectl apply -f canary-nginx/nginx-app.yaml --namespace test
     
       - name: "Check Canary Pod"
         run: |

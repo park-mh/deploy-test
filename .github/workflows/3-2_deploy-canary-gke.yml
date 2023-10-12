@@ -54,7 +54,7 @@ jobs:
 
 
   complete:
-    needs: canary
+    needs: []
     if: github.event_name == 'workflow_dispatch'
     permissions:
       id-token: write

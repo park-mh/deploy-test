@@ -36,14 +36,14 @@ jobs:
       - name: Get Kubernetes config
         run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ secrets.ZONE }} --project ${{ secrets.PROJECT_ID }}
 
-      - name: "Deploy Canary"
+      - name: "Deploy Stable Version"
         run: |
           kubectl apply -f canary-nginx/nginx-app.yaml --namespace test
     
-      - name: "Check Canary Pod"
+      - name: "Check Pod"
         run: |
-          kubectl get pod --namespace test
+          kubectl get pod --namespace test -o wide
 
-      - name: "Change Backend Service"
+      - name: "Check Service"
         run: |
-          kubectl patch service nginx-svc --namespace test --patch '{"spec": {"selector": {"version": null}}}'
+          kubectl get svc --namespace test

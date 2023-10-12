@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>테스트</title>
+  </head>
+  <body>
+    <center>
+      <h1>DQA 내부과제 용 테스트 화면입니다.</h1>
+      <p id="imageName"></p>
+      <p id="imageTag"></p>
+    </center>
+    <script>
+      // 이미지 이름 가져오기
+      const imageName = "Image Name: " + "{{ imageName }}";
+      document.getElementById("imageName").textContent = imageName;
+
+      // 이미지 태그 가져오기
+      const imageTag = "Image Tag: " + "{{ imageTag }}";
+      document.getElementById("imageTag").textContent = imageTag;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+name: "[Deploy] Skaffold to GKE Cluster"
+
+on:
+  workflow_dispatch:
+
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GKE_PROVIDER_ID }}
+          service_account: ${{ secrets.GKE_SERVICE_ACCOUNT }}
+          audience: 'https://github.com/park-mh/deploy-test'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: Install Google Cloud Auth plugin
+        run: gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get Kubernetes config
+        run: gcloud container clusters get-credentials ${{ secrets.CLUSTER_NAME }} --zone ${{ inputs.zone }} --project ${{ secrets.PROJECT_ID }}
+
+      - name: Run Skaffold pipeline as action
+        uses: hiberbee/github-action-skaffold@latest
+        with:
+          command: run
+          cache: false
+          insecure-registries: localhost:5000
+          namespace: default
+          repository: ${{ secrets.REPOSITORY }}
+          verbosity: info
+          working-directory: skaffold
+
+      - name: Run Skaffold with output to file
+        uses: hiberbee/github-action-skaffold@latest
+        with:
+          command: build
+          file-output: tags.json
+          repository: ${{ secrets.REPOSITORY }}
+          working-directory: skaffold
+
+      - name: Get Helm releases
+        run: helm list

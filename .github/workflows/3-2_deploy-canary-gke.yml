@@ -39,5 +39,11 @@ jobs:
       - name: Canary Update
         run: kubectl scale deployment nginx-canary --namespace test --replicas=3
 
+      - name: Check Canary Update
+        run: kubectl get pod --namespace test -o wide
+
       - name: Delete previous version
         run: kubectl delete -f canary-nginx/nginx-app.yaml --namespace test
+
+      - name: Check Pod Status
+        run: kubectl get pod --namespace test -o wide
